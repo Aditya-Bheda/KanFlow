@@ -1,0 +1,115 @@
+/* ... (dashboard-container adjustments) ... */
+.dashboard-container {
+    padding-top: 60px; /* Increased top padding matching request */
+    margin-bottom: 40px;
+}
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.boards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.board-card {
+    height: 120px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: var(--text-main);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+.board-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    border-color: rgba(80, 227, 194, 0.5);
+}
+
+.board-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.board-card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    word-break: break-word;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 50%;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.board-card:hover .icon-btn {
+    opacity: 1;
+}
+
+.icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    transform: scale(1.1);
+}
+
+.delete-btn:hover {
+    color: var(--danger);
+    background-color: rgba(248, 81, 73, 0.15);
+}
+
+.create-board-btn {
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+}
+
+.create-board-btn:hover {
+    color: var(--text-main);
+    border-style: solid;
+}
+
+.creating-state {
+    cursor: default;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.create-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.create-actions button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+/* Glass panel utility for cards */
+.glass-panel {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+}

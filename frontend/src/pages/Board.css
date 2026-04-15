@@ -1,0 +1,175 @@
+.board-container {
+    height: calc(100vh - 60px);
+    background: radial-gradient(circle at 10% 20%, rgba(30, 48, 80, 0.4) 0%, rgba(13, 17, 23, 1) 90%);
+    padding: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.board-canvas {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    height: 100%;
+}
+
+.list-wrapper {
+    flex-shrink: 0;
+    width: 300px;
+}
+
+.list-content {
+    background-color: rgba(22, 27, 34, 0.7);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 100px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.list-header {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-header h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.list-cards {
+    padding: 0 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 10px;
+}
+
+.card {
+    background-color: #21262d;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    border-color: #8b949e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+}
+
+.card:active {
+    cursor: grabbing;
+}
+
+.card-title {
+    flex: 1;
+    word-break: break-word;
+}
+
+.card-actions {
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.card:hover .card-actions {
+    opacity: 1;
+}
+
+.card-input {
+    width: 100%;
+    background: #0d1117;
+    border: 1px solid var(--primary-color);
+    border-radius: 6px;
+    padding: 8px;
+    color: white;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.add-card-btn, .add-list-btn {
+    background: transparent;
+    border: none;
+    padding: 12px 16px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    border-radius: max(0px, 12px - 2px); 
+    font-weight: 500;
+}
+
+.add-list-btn {
+    background-color: rgba(255,255,255,0.05);
+}
+
+.add-card-btn:hover, .add-list-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: var(--text-main);
+}
+
+.icon-btn-form {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.icon-btn-form:hover {
+    color: var(--text-main);
+}
+
+.add-card-form, .add-list-form {
+    padding: 12px;
+}
+
+.add-list-form {
+    background-color: #0d1117;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+/* Custom Scrollbar for Lists and Canvas */
+.custom-scrollbar::-webkit-scrollbar, .board-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track, .board-container::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1); 
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb, .board-container::-webkit-scrollbar-thumb {
+    background: #30363d; 
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover, .board-container::-webkit-scrollbar-thumb:hover {
+    background: #8b949e; 
+}
