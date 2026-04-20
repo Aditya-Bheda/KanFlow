@@ -7,8 +7,17 @@ import './Navbar.css';
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+
+    const handleSearch = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        // Navigate to dashboard with search query if user is on another page
+        // or just update query if already on dashboard
+        navigate(`/dashboard?search=${encodeURIComponent(query)}`);
+    };
 
     const handleLogout = () => {
         logout();
@@ -50,7 +59,13 @@ const Navbar = () => {
                 <div className="navbar-center">
                     <div className="search-container">
                         <Search size={16} className="search-icon" />
-                        <input type="text" placeholder="Search" className="search-input" />
+                        <input 
+                            type="text" 
+                            placeholder="Search boards..." 
+                            className="search-input" 
+                            value={searchQuery}
+                            onChange={handleSearch}
+                        />
                     </div>
                 </div>
             )}
@@ -72,8 +87,8 @@ const Navbar = () => {
                                     <span className="dropdown-email">{user.email}</span>
                                 </div>
                                 <div className="dropdown-divider"></div>
-                                <Link to="/dashboard" className="dropdown-item" onClick={() => setDropdownOpen(false)}>My Lists</Link>
-                                <Link to="/dashboard" className="dropdown-item" onClick={() => setDropdownOpen(false)}>My Cards</Link>
+                                <Link to="/activity" className="dropdown-item" onClick={() => setDropdownOpen(false)}>My Lists</Link>
+                                <Link to="/activity" className="dropdown-item" onClick={() => setDropdownOpen(false)}>My Cards</Link>
                                 <div className="dropdown-divider"></div>
                                 <button className="dropdown-item text-danger" onClick={handleLogout}>Log Out</button>
                             </div>

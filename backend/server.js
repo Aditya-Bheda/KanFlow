@@ -8,7 +8,12 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+// CORS setup: Allow requests from the frontend URL (local or production)
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes

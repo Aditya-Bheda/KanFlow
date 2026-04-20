@@ -11,6 +11,11 @@ const cardSchema = new mongoose.Schema({
         trim: true,
         default: ''
     },
+    status: {
+        type: String,
+        enum: ['To Do', 'In Progress', 'Done'],
+        default: 'To Do'
+    },
     list: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'List',

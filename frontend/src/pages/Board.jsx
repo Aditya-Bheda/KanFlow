@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Plus, Trash2, Edit2, Check, X, Filter, Share2, MoreHorizontal, AlignLeft } from 'lucide-react';
 import './Board.css';
 
 const Board = () => {
@@ -9,10 +9,23 @@ const Board = () => {
     const [lists, setLists] = useState([]);
     const [isCreatingList, setIsCreatingList] = useState(false);
     const [newListTitle, setNewListTitle] = useState('');
+    const [boardInfo, setBoardInfo] = useState({ title: 'Kanban Board' }); // Fallback
 
     useEffect(() => {
         fetchLists();
+        fetchBoardDetails();
     }, [id]);
+
+    const fetchBoardDetails = async () => {
+        try {
+            // Assuming this route exists or fallback to a standard name.
+            const res = await axios.get('/api/boards');
+            const currentBoard = res.data.find(b => b._id === id);
+            if(currentBoard) setBoardInfo(currentBoard);
+        } catch (error) {
+            console.error('Error fetching board details', error);
+        }
+    };
 
     const fetchLists = async () => {
         try {
@@ -25,7 +38,6 @@ const Board = () => {
                     return { ...list, cards: cardsRes.data };
                 })
             );
-
             setLists(listWithCards);
         } catch (error) {
             console.error('Error fetching board data', error);
@@ -69,9 +81,9 @@ const Board = () => {
         }
     };
 
-    const handleUpdateCard = async (listId, cardId, newTitle) => {
+    const handleUpdateCard = async (listId, cardId, updates) => {
         try {
-            const res = await axios.put(`/api/cards/${cardId}`, { title: newTitle });
+            const res = await axios.put(`/api/cards/${cardId}`, updates);
             setLists(lists.map(list => {
                 if(list._id === listId) {
                     return {
@@ -105,9 +117,33 @@ const Board = () => {
         }
     };
 
+    const handleFeatureClick = () => {
+        alert("This premium feature (Filtering, Sharing, Invites) is currently under development! Stay tuned for future updates.");
+    };
+
     return (
         <div className="board-container">
-            <div className="board-canvas">
+            {/* Board Top Header for complex UI look */}
+            <div className="board-top-bar">
+                <div className="board-top-left">
+                    <h2 className="board-main-title">{boardInfo.title}</h2>
+                    <span className="board-star-toggle" onClick={() => alert("Board starred!")}>☆</span>
+                    <div className="divider-vertical"></div>
+                    <div className="board-avatars" title="Team members">
+                        <div className="avatar" onClick={handleFeatureClick}>A</div>
+                        <div className="avatar" onClick={handleFeatureClick}>S</div>
+                        <div className="avatar" onClick={handleFeatureClick}>K</div>
+                    </div>
+                    <button className="top-btn btn-ghost-light" onClick={handleFeatureClick}>Invites</button>
+                </div>
+                <div className="board-top-right">
+                    <button className="top-btn btn-ghost-light" onClick={handleFeatureClick}><Filter size={16}/> Filter</button>
+                    <button className="top-btn btn-light-solid" onClick={handleFeatureClick}><Share2 size={16}/> Share</button>
+                    <button className="top-btn btn-ghost-light" onClick={handleFeatureClick}><MoreHorizontal size={16}/></button>
+                </div>
+            </div>
+
+            <div className="board-canvas custom-scrollbar">
                 {lists.map(list => (
                     <ListColumn 
                         key={list._id} 
@@ -121,11 +157,11 @@ const Board = () => {
 
                 <div className="list-wrapper">
                     {!isCreatingList ? (
-                        <button className="add-list-btn glass-panel" onClick={() => setIsCreatingList(true)}>
+                        <button className="add-list-btn" onClick={() => setIsCreatingList(true)}>
                             <Plus size={18} /> Add another list
                         </button>
                     ) : (
-                        <div className="add-list-form glass-panel">
+                        <div className="add-list-form">
                             <form onSubmit={handleCreateList}>
                                 <input 
                                     autoFocus
@@ -164,7 +200,7 @@ const ListColumn = ({ list, onCreateCard, onDeleteList, onUpdateCard, onDeleteCa
 
     return (
         <div className="list-wrapper">
-            <div className="list-content glass-panel">
+            <div className="list-content">
                 <div className="list-header">
                     <h3>{list.title}</h3>
                     <button className="icon-btn delete-btn" onClick={() => onDeleteList(list._id)} title="Delete List">
@@ -173,13 +209,14 @@ const ListColumn = ({ list, onCreateCard, onDeleteList, onUpdateCard, onDeleteCa
                 </div>
 
                 <div className="list-cards custom-scrollbar">
-                    {list.cards && list.cards.map(card => (
+                    {list.cards && list.cards.map((card, idx) => (
                         <CardItem 
                             key={card._id} 
                             card={card} 
                             listId={list._id}
                             onUpdateCard={onUpdateCard}
                             onDeleteCard={onDeleteCard}
+                            index={idx}
                         />
                     ))}
                 </div>
@@ -212,15 +249,31 @@ const ListColumn = ({ list, onCreateCard, onDeleteList, onUpdateCard, onDeleteCa
     );
 };
 
-const CardItem = ({ card, listId, onUpdateCard, onDeleteCard }) => {
+const CardItem = ({ card, listId, onUpdateCard, onDeleteCard, index }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editTitle, setEditTitle] = useState(card.title);
 
+    // Dynamic status colored labels
+    const getStatusColor = (status) => {
+        switch(status) {
+            case 'Done': return '#4bce97'; // Green
+            case 'In Progress': return '#e2b203'; // Yellow
+            case 'To Do': default: return 'transparent';
+        }
+    };
+    
+    // Add some random pseudo mechanics to make it look full
+    const checkCount = index % 3 === 0 ? "1/3" : null;
+
     const handleSave = () => {
         if(editTitle.trim() && editTitle !== card.title) {
-            onUpdateCard(listId, card._id, editTitle);
+            onUpdateCard(listId, card._id, { title: editTitle });
         }
         setIsEditing(false);
+    };
+
+    const handleStatusChange = (e) => {
+        onUpdateCard(listId, card._id, { status: e.target.value });
     };
 
     if(isEditing) {
@@ -230,12 +283,12 @@ const CardItem = ({ card, listId, onUpdateCard, onDeleteCard }) => {
                     autoFocus
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    rows={2}
+                    rows={3}
                     className="card-input"
                 />
                 <div className="edit-actions">
-                    <button onClick={handleSave} className="btn-primary" style={{padding: '4px 8px'}}><Check size={14}/></button>
-                    <button onClick={() => setIsEditing(false)} className="btn-ghost" style={{padding: '4px 8px'}}><X size={14}/></button>
+                    <button onClick={handleSave} className="btn-primary" style={{padding: '6px 12px'}}><Check size={14}/></button>
+                    <button onClick={() => setIsEditing(false)} className="btn-ghost" style={{padding: '6px 12px'}}><X size={14}/></button>
                 </div>
             </div>
         );
@@ -243,14 +296,36 @@ const CardItem = ({ card, listId, onUpdateCard, onDeleteCard }) => {
 
     return (
         <div className="card">
-            <span className="card-title">{card.title}</span>
-            <div className="card-actions">
-                <button className="icon-btn edit-btn" onClick={() => setIsEditing(true)} title="Edit">
-                    <Edit2 size={14} />
-                </button>
-                <button className="icon-btn delete-btn" onClick={() => onDeleteCard(listId, card._id)} title="Delete">
-                    <Trash2 size={14} />
-                </button>
+            {card.status && card.status !== 'To Do' && (
+                <div className="card-labels">
+                    <span className="card-label-color" style={{backgroundColor: getStatusColor(card.status), width: '40px', height: '6px', display: 'inline-block', borderRadius: '4px'}}></span>
+                </div>
+            )}
+            <div className="card-top-content">
+                <span className="card-title">{card.title}</span>
+                <div className="card-actions-permanent">
+                    <button className="card-action-btn" onClick={() => setIsEditing(true)} title="Edit">
+                        <Edit2 size={14} />
+                    </button>
+                    <button className="card-action-btn delete-btn-hover" onClick={() => onDeleteCard(listId, card._id)} title="Delete">
+                        <Trash2 size={14} />
+                    </button>
+                </div>
+            </div>
+            
+            <div className="card-footer">
+                <div className="card-badges" style={{gap: '6px'}}>
+                    <select 
+                        value={card.status || 'To Do'}
+                        onChange={handleStatusChange}
+                        className="status-select"
+                        title="Set Status"
+                    >
+                        <option value="To Do">To Do</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Done">Done</option>
+                    </select>
+                </div>
             </div>
         </div>
     );

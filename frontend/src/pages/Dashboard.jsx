@@ -1,18 +1,32 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Plus, Trash2 } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
     const [boards, setBoards] = useState([]);
+    const [filteredBoards, setFilteredBoards] = useState([]);
     const [title, setTitle] = useState('');
     const [isCreating, setIsCreating] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         fetchBoards();
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const query = params.get('search') || '';
+        if (query) {
+            setFilteredBoards(boards.filter(b => 
+                b.title.toLowerCase().includes(query.toLowerCase())
+            ));
+        } else {
+            setFilteredBoards(boards);
+        }
+    }, [location.search, boards]);
 
     const fetchBoards = async () => {
         try {
@@ -48,54 +62,56 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard-container container">
-            <div className="dashboard-header">
-                <h2>Your Workspaces</h2>
-            </div>
-            
-            <div className="boards-grid">
-                {boards.map(board => (
-                    <div 
-                        key={board._id} 
-                        className="board-card glass-panel"
-                        onClick={() => navigate(`/board/${board._id}`)}
-                    >
-                        <div className="board-card-header">
-                            <h3>{board.title}</h3>
-                            <button 
-                                className="icon-btn delete-btn" 
-                                onClick={(e) => handleDeleteBoard(e, board._id)}
-                                title="Delete Board"
-                            >
-                                <Trash2 size={16} />
-                            </button>
-                        </div>
-                    </div>
-                ))}
-
-                {!isCreating ? (
-                    <div className="board-card glass-panel create-board-btn" onClick={() => setIsCreating(true)}>
-                        <Plus />
-                        <span>Create new board</span>
-                    </div>
-                ) : (
-                    <div className="board-card glass-panel creating-state">
-                        <form onSubmit={handleCreateBoard}>
-                            <input 
-                                autoFocus
-                                type="text" 
-                                placeholder="Board title" 
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                required
-                            />
-                            <div className="create-actions">
-                                <button type="submit" className="btn-primary">Create</button>
-                                <button type="button" onClick={() => setIsCreating(false)} className="btn-ghost">Cancel</button>
+        <div className="dashboard-page">
+            <div className="dashboard-container container">
+                <div className="dashboard-header">
+                    <h2>Your Workspaces</h2>
+                </div>
+                
+                <div className="boards-grid">
+                    {filteredBoards.map(board => (
+                        <div 
+                            key={board._id} 
+                            className="board-card glass-panel"
+                            onClick={() => navigate(`/board/${board._id}`)}
+                        >
+                            <div className="board-card-header">
+                                <h3>{board.title}</h3>
+                                <button 
+                                    className="icon-btn delete-btn" 
+                                    onClick={(e) => handleDeleteBoard(e, board._id)}
+                                    title="Delete Board"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
                             </div>
-                        </form>
-                    </div>
-                )}
+                        </div>
+                    ))}
+
+                    {!isCreating ? (
+                        <div className="board-card glass-panel create-board-btn" onClick={() => setIsCreating(true)}>
+                            <Plus />
+                            <span>Create new board</span>
+                        </div>
+                    ) : (
+                        <div className="board-card glass-panel creating-state">
+                            <form onSubmit={handleCreateBoard}>
+                                <input 
+                                    autoFocus
+                                    type="text" 
+                                    placeholder="Board title" 
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    required
+                                />
+                                <div className="create-actions">
+                                    <button type="submit" className="btn-primary">Create</button>
+                                    <button type="button" onClick={() => setIsCreating(false)} className="btn-ghost" style={{color: 'white'}}>Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

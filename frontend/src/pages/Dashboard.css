@@ -1,7 +1,12 @@
-/* ... (dashboard-container adjustments) ... */
+.dashboard-page {
+    min-height: calc(100vh - 54px);
+    background: radial-gradient(circle at top right, #1f2e4d 0%, #0d1117 80%);
+    width: 100%;
+}
+
 .dashboard-container {
-    padding-top: 60px; /* Increased top padding matching request */
-    margin-bottom: 40px;
+    padding-top: 60px;
+    padding-bottom: 40px;
 }
 
 .dashboard-header {
@@ -29,7 +34,7 @@
 .board-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-    border-color: rgba(80, 227, 194, 0.5);
+    border-color: rgba(80, 227, 194, 0.5); /* secondary color glow */
 }
 
 .board-card-header {
@@ -55,7 +60,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
+    opacity: 0; 
     transition: all 0.2s;
 }
 
@@ -107,9 +112,9 @@
     font-size: 0.85rem;
 }
 
-/* Glass panel utility for cards */
+/* Glass panel background style */
 .glass-panel {
-    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
 }
