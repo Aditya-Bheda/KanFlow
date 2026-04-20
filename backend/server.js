@@ -4,6 +4,17 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
 dotenv.config();
+
+// Validation for critical environment variables
+const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
+requiredEnvVars.forEach((v) => {
+    if (!process.env[v]) {
+        console.error(`ERROR: Missing mandatory environment variable: ${v}`);
+        // We don't exit here because Render might need the process to stay alive 
+        // briefly to show the log, but db connection will likely fail later.
+    }
+});
+
 connectDB();
 
 const app = express();
@@ -38,6 +49,14 @@ app.use('/api/cards', require('./routes/cardRoutes'));
 
 app.get('/', (req, res) => {
     res.send('Trello Clone API is running...');
+});
+
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'OK', 
+        timestamp: new Date(),
+        environment: process.env.NODE_ENV || 'development'
+    });
 });
 
 const PORT = process.env.PORT || 5000;

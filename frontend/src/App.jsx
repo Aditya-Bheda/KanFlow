@@ -12,7 +12,7 @@ import Board from './pages/Board';
 import MyActivity from './pages/MyActivity';
 
 // Set base URL for backend API (Use environment variable for production)
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || 'https://kanflow-1.onrender.com';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = React.useContext(AuthContext);
